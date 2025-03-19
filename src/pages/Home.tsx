@@ -193,8 +193,29 @@ function Home() {
     )
   }
 
+  // Update the scroll-container class to prevent horizontal overflow
+  // This targets the container that holds the horizontally scrolling movie cards
+
+  // First, find this CSS class in your styles (likely in index.css or a CSS module)
+  // and update it, or add these styles to the component's inline styling:
+
+  const scrollContainerStyle = `
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+    scroll-snap-type: x mandatory;
+    white-space: nowrap;
+    padding: 0.5rem 0;
+    margin: 0 -1rem;
+    width: 100%;
+    max-width: 100vw;
+    padding-left: 1rem;
+    scroll-padding-left: 1rem;
+  `
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 overflow-x-hidden">
       <div
         className={`relative ${
           isSearching ? "min-h-[80px]" : "min-h-[40vh] sm:min-h-[60vh]"
@@ -378,7 +399,7 @@ function Home() {
                     View All
                   </Link>
                 </div>
-                <div className="scroll-container">
+                <div className="scroll-container" style={scrollContainerStyle}>
                   {movies.map(movie => (
                     <MovieCard
                       key={`${genre}-${movie.imdbID}`}
