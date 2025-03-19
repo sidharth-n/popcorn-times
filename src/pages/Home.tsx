@@ -78,7 +78,10 @@ function Home() {
 
   const handleSearch = useCallback(
     async (query: string, page: number = 1) => {
-      if (!query.trim()) {
+      // Ensure query is trimmed
+      const trimmedQuery = query.trim()
+
+      if (!trimmedQuery) {
         dispatch(setIsSearching(false))
         dispatch(setSearchResults([]))
         dispatch(setError(null))
@@ -88,11 +91,11 @@ function Home() {
 
       dispatch(setLoading(true))
       dispatch(setIsSearching(true))
-      dispatch(setSearchQuery(query))
       dispatch(setError(null))
 
       try {
-        const response = await movieService.searchMovies(query, page)
+        // Use the trimmed query for the API call
+        const response = await movieService.searchMovies(trimmedQuery, page)
         if (response.Response === "False") {
           if (response.Error === "Too many results.") {
             dispatch(
@@ -199,20 +202,20 @@ function Home() {
   // First, find this CSS class in your styles (likely in index.css or a CSS module)
   // and update it, or add these styles to the component's inline styling:
 
-  const scrollContainerStyle = `
-    overflow-x: auto;
-    overflow-y: hidden;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE/Edge */
-    scroll-snap-type: x mandatory;
-    white-space: nowrap;
-    padding: 0.5rem 0;
-    margin: 0 -1rem;
-    width: 100%;
-    max-width: 100vw;
-    padding-left: 1rem;
-    scroll-padding-left: 1rem;
-  `
+  const scrollContainerStyle = {
+    overflowX: "auto",
+    overflowY: "hidden",
+    scrollbarWidth: "none" /* Firefox */,
+    msOverflowStyle: "none" /* IE/Edge */,
+    scrollSnapType: "x mandatory",
+    whiteSpace: "nowrap",
+    padding: "0.5rem 0",
+    margin: "0 -1rem",
+    width: "100%",
+    maxWidth: "100vw",
+    paddingLeft: "1rem",
+    scrollPaddingLeft: "1rem",
+  }
 
   return (
     <div className="space-y-8 overflow-x-hidden">
@@ -250,7 +253,7 @@ function Home() {
               onChange={e => {
                 const value = e.target.value
                 dispatch(setSearchQuery(value))
-                debouncedSearch(value)
+                debouncedSearch(value.trim())
               }}
               className="w-full py-3 sm:py-4 px-4 sm:px-6 pl-10 sm:pl-12 bg-gray-900 bg-opacity-75 border-2 border-gray-700 rounded-lg focus:outline-none focus:border-red-600 text-white text-base sm:text-lg placeholder-gray-400 backdrop-blur-sm"
             />
