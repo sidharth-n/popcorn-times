@@ -15,6 +15,7 @@ import {
   Search,
   ArrowLeft,
   ArrowRight,
+  X,
 } from "lucide-react"
 import { Movie } from "../types/movie"
 import { movieService } from "../services/api"
@@ -217,6 +218,14 @@ function Home() {
     scrollPaddingLeft: "1rem",
   }
 
+  // First, add auto-focus to the search bar when page loads
+  useEffect(() => {
+    // Auto-focus on the search input when component mounts
+    if (searchInputRef.current) {
+      searchInputRef.current.focus()
+    }
+  }, [])
+
   return (
     <div className="space-y-8 overflow-x-hidden">
       <div
@@ -247,6 +256,7 @@ function Home() {
           )}
           <div className="relative">
             <input
+              ref={searchInputRef}
               type="text"
               placeholder="Search for movies..."
               value={searchQuery}
@@ -255,9 +265,29 @@ function Home() {
                 dispatch(setSearchQuery(value))
                 debouncedSearch(value.trim())
               }}
-              className="w-full py-3 sm:py-4 px-4 sm:px-6 pl-10 sm:pl-12 bg-gray-900 bg-opacity-75 border-2 border-gray-700 rounded-lg focus:outline-none focus:border-red-600 text-white text-base sm:text-lg placeholder-gray-400 backdrop-blur-sm"
+              className="w-full py-3 sm:py-4 px-4 sm:px-6 pl-10 sm:pl-12 pr-10 bg-gray-900 bg-opacity-75 border-2 border-gray-700 rounded-lg focus:outline-none focus:border-red-600 text-white text-base sm:text-lg placeholder-gray-400 backdrop-blur-sm"
             />
             <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+
+            {/* Clear button - only show when there's text */}
+            {searchQuery && (
+              <button
+                onClick={() => {
+                  dispatch(setSearchQuery(""))
+                  dispatch(setIsSearching(false))
+                  dispatch(setSearchResults([]))
+                  dispatch(setError(null))
+                  dispatch(setTotalResults(0))
+                  // Focus back on the input after clearing
+                  if (searchInputRef.current) {
+                    searchInputRef.current.focus()
+                  }
+                }}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-gray-700 rounded-full p-1 text-gray-300 hover:text-white hover:bg-gray-600 transition-all"
+              >
+                <X size={16} /> {/* Using Lucide X icon */}
+              </button>
+            )}
           </div>
         </div>
       </div>
